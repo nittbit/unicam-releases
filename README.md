@@ -13,6 +13,7 @@ Each release ships the following assets:
 | Platform | Asset |
 |---|---|
 | macOS (Apple Silicon) | `unicam-hub_<version>_arm64.dmg` |
+| macOS (Intel) | `unicam-hub_<version>_amd64.dmg` |
 | Windows x64 | `unicam-hub_<version>_amd64_setup.exe` (installer) or `unicam-hub_<version>_amd64.zip` (portable) |
 | Linux amd64 | `unicam-hub_<version>_amd64.deb` |
 | Linux arm64 | `unicam-hub_<version>_arm64.deb` |
