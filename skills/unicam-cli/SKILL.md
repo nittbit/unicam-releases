@@ -19,8 +19,7 @@ Windows or Linux from https://unicam.app/hub/download/, or on macOS (Apple
 Silicon) and Linux use Homebrew:
 
 ```bash
-brew tap nittbit/tap
-brew install unicam-hub
+brew install nittbit/tap/unicam-hub
 brew services start unicam-hub
 ```
 

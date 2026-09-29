@@ -25,8 +25,7 @@ Releases without that mark are stable.
 ## Homebrew
 
 ```sh
-brew tap nittbit/tap
-brew install unicam-hub
+brew install nittbit/tap/unicam-hub
 brew services start unicam-hub
 ```
 
