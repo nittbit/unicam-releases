@@ -187,6 +187,8 @@ unicam workflow create \
 # The platform generates the whole workflow from the description in one call.
 # --hub-channel is optional; if omitted the hub picks the best-resolution channel without a workflow.
 # If that channel already has a workflow, it is regenerated in place.
+# WARNING: that changes the workflow on EVERY hub channel running it. To give
+# this channel its own workflow, run `workflow deactivate <id|name> --hub-channel <id|name>` first.
 # On success, stdout contains workflowId, name, prompt, schema and triggerConditions[].
 ```
 
@@ -215,13 +217,16 @@ unicam workflow get <id> --json
 # derives a trigger condition.
 ```
 
-**Attach to a different hub channel (or reassign later):**
+**Also run it on another hub channel:**
 
 ```bash
 unicam workflow update <id|name> --hub-channel "Back Yard" --json
+# Adds the channel: a workflow can run on several cameras, and cameras already
+# running it keep it. A camera runs at most one workflow, so a channel already
+# running a different one is rejected (exit 6); deactivate that one there first.
 ```
 
-**Rewrite the description** (keeps the id, so the camera keeps running it):
+**Rewrite the description** (keeps the id, so every camera running it keeps running it, with the new description):
 
 ```bash
 unicam workflow rewrite <id|name> --description "Flag any delivery van or truck" --json
@@ -229,12 +234,17 @@ unicam workflow rewrite <id|name> --description "Flag any delivery van or truck"
 # A refused description exits 6 with the platform's reason in "error"; rephrase and retry.
 ```
 
-**Deactivate** (the camera stops running it; the workflow is kept):
+**Deactivate** (one camera stops running it; the workflow is kept):
 
 ```bash
 unicam workflow deactivate <id|name> --json
-# Clears the channel's link and turns its AI notifications off.
-# "deactivated": false means no channel was running it. Re-link with workflow update --hub-channel.
+unicam workflow deactivate <id|name> --hub-channel "Back Yard" --json
+# Clears one channel's link and turns its AI notifications off; other channels keep the workflow.
+# If the workflow runs on several channels, --hub-channel is required: without it the
+# command lists them in "error" and exits 2, changing nothing.
+# "deactivated": false means no channel (or not the named one) was running it.
+# With --hub-channel, "hubChannelId" is that channel either way; an unknown one exits 5.
+# Re-link with workflow update --hub-channel.
 ```
 
 **Turn push notifications on or off per camera:**
@@ -250,7 +260,7 @@ unicam hub channels update "Front Door" --motion-notifications=false --json  # w
 unicam workflow list --json
 ```
 
-**Delete a workflow** (clears its hub-channel attachment — irreversible):
+**Delete a workflow** (clears it from every hub channel running it — irreversible):
 
 ```bash
 unicam workflow delete <id|name> --yes --json
@@ -308,7 +318,8 @@ unicam recordings list --all --json
 **Filter recordings:**
 
 ```bash
-# By hub channel and date range:
+# By hub channel and date range. This filters by the channel's workflow, so
+# recordings from every hub channel running that workflow are included:
 unicam recordings list --hub-channel "Front Door" --from 2026-01-01 --to 2026-01-31 --json
 
 # Client-side substring filter (combine with --all for a complete scan):

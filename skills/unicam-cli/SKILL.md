@@ -128,6 +128,7 @@ unicam workflow create --description "Flag any delivery van in the driveway" \
 unicam workflow get <id> --json                                  # sourcePrompt = the description
 unicam workflow rewrite <id|name> --description "Flag any van or truck" --json   # same id, new analysis
 unicam workflow deactivate <id|name> --json                      # camera stops running it; workflow kept
+                                                                 # (--hub-channel <id|name> when it runs on several)
 unicam hub channels update "Front Door" --ai-notifications --motion-notifications --json
 ```
 
