@@ -106,8 +106,7 @@ Full copy-pasteable recipes are in [`reference/workflows.md`](reference/workflow
 unicam auth login --email "$EMAIL" --password-stdin <<<"$PASSWORD"
 unicam cameras discover --json                                              # note the index (1, 2, …)
 unicam cameras add onvif --from-discovery 1 --name "Front Door" \
-    --username admin --password-stdin <<<"$CAMPW" --json
-unicam cameras assign "Front Door" --json                                   # attach to current hub
+    --username admin --password-stdin <<<"$CAMPW" --json                   # also attaches it to the current hub
 unicam motion set "Front Door" --enabled --json                             # enable motion detection
 unicam motion mask set "Front Door" --zones "0,0,4,4" --json               # exclude zone (16x16 grid units)
 ```

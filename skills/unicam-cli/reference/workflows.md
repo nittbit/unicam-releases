@@ -33,7 +33,7 @@ unicam hub create --name "Home Hub" --json
 
 ## 1. Onboard an ONVIF camera end-to-end
 
-**Goal:** Discover an ONVIF camera on the local network, register it, assign it to the hub, and enable motion detection.
+**Goal:** Discover an ONVIF camera on the local network, register it on the hub, and enable motion detection.
 
 **Step 1 — Log in and create the hub (once per machine):**
 
@@ -66,6 +66,9 @@ unicam cameras add onvif \
 # --from-discovery accepts an index (1-based) or the full URN.
 # --name defaults to the derived/discovered name if omitted.
 # On success, stdout contains the new camera object including its ID.
+# `cameras add` also attaches the camera to the current hub: do not run
+# `cameras assign` afterwards. `assign` is only for a camera that exists but is
+# not on this hub yet (for example one added from the mobile app).
 ```
 
 **Manual alternative (skip discover, use IP directly):**
@@ -85,26 +88,20 @@ unicam cameras add onvif \
 unicam cameras get "Front Door" --json
 ```
 
-**Step 5 — Assign the camera to the current hub:**
-
-```bash
-unicam cameras assign "Front Door" --json
-```
-
-**Step 6 — Confirm the hub sees the camera:**
+**Step 5 — Confirm the hub sees the camera:**
 
 ```bash
 unicam hub devices --json
 ```
 
-**Step 7 — Enable motion detection on the hub channel:**
+**Step 6 — Enable motion detection on the hub channel:**
 
 ```bash
 unicam motion set "Front Door" --enabled --json
 # motion set restarts the affected capture/processing services; allow a few seconds.
 ```
 
-**Step 8 — (Optional) Set a motion exclusion mask:**
+**Step 7 — (Optional) Set a motion exclusion mask:**
 
 ```bash
 # Zones are in 16x16 grid units (x,y,w,h; origin = top-left).
@@ -115,7 +112,7 @@ unicam motion mask set "Front Door" --zones "0,0,4,4;8,8,2,2" --json
 
 **Failure branches:**
 
-- Exit 5 on `assign` → camera name not found; check with `cameras list --json`.
+- Exit 5 on `motion set` → camera name not found; `motion` takes the camera's name on the hub, which is `displayName` in `cameras list --json` (for an NVR, each channel's name in `hub channels list --json`).
 - Exit 6 on `add onvif` → duplicate name or invalid config; read the `hint` field.
 - Exit 3 at any point → daemon stopped; `unicam status --json` and restart.
 
